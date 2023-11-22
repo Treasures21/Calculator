@@ -47,9 +47,12 @@ notebook.add(Calculus, text="Calculus")
 
 
 #enter data
-X_axis = (34,35,36,37,38,39,40,41)
-Y_axis = (1,4,13,6,9,8,9,10)
+def enter_data():
+    X_axis = (34, 35, 36, 37, 38, 39, 40, 41)
+    Y_axis = (1, 4, 13, 6, 9, 8, 9, 10)
+    return X_axis, Y_axis
 
+X_axis, Y_axis = enter_data()
 
 #subplots
 fig_bstats, ax_bstats = plt.subplots()
@@ -69,14 +72,6 @@ plot_button.place(x=120, y=520)
 plot_button.configure(state="normal")
 plot_button.place()
 
-#toolbar
-#toolbar = NavigationToolbar2Tk(canvas_bstats, BS, pack_toolbar=False)
-#toolbar.update()
-#toolbar.pack()
-
-#toolbar = NavigationToolbar2Tk(canvas_bstats, ND, pack_toolbar=False)
-#toolbar.update()
-#toolbar.pack()
 
 #mean calculator
 def mean_calc():
@@ -112,14 +107,16 @@ def median_calc():
     #standard deviation calculator
 def std_calc():
     x_std = np.std(X_axis)
-    label = tk.Label(BS, text="X - axis Standard Deviation: " + str(x_std))
+    x_std_rounded = np.around(x_std, 4)
+    label = tk.Label(BS, text="X - axis Standard Deviation: " + str(x_std_rounded))
     label.place(x=360, y=640)
 
     y_std = np.std(Y_axis)
-    label = tk.Label(BS, text="Y - axis Standard Deviation: " + str(y_std))
+    y_std_rounded = np.around(y_std, 4)
+    label = tk.Label(BS, text="Y - axis Standard Deviation: " + str(y_std_rounded))
     label.place(x=360, y=660)
 
-    return x_std, y_std
+    return x_std_rounded, y_std_rounded
 
 #Buttons
 
@@ -142,9 +139,14 @@ std_button.place(x=120, y=640)
 
 #Normal Distribution
 
-mean = 0
-std_dev = 1
-variance = np.square(std_dev)
+def enter_data():
+    mean = 0
+    std_dev = 1
+    variance = np.square(std_dev)
+    return mean, std_dev, variance
+
+mean, std_dev, variance = enter_data()
+
 
 # Generate x-axis values
 x = np.arange(-5, 5, 0.1)
