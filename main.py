@@ -5,7 +5,7 @@ import numpy as np
 import tkinter as tk
 from tkinter import ttk
 from scipy.stats import norm
-
+from sympy import *
 
 #Tkinter gui
 Calculator = tk.Tk()
@@ -29,6 +29,9 @@ notebook.pack(fill=tk.BOTH, expand=True)
 Stats = ttk.Frame(notebook)
 notebook.add(Stats, text="Statistics")
 
+Calculus = ttk.Frame(notebook)
+notebook.add(Calculus, text="Calculus")
+
 
 # Nested Tab
 NestedTab = ttk.Notebook(Stats)
@@ -42,8 +45,12 @@ ND = ttk.Frame(NestedTab)
 NestedTab.add(ND, text="Normal Distribution")
 NestedTab.pack(expand=1, fill="both")
 
-Calculus = ttk.Frame(notebook)
-notebook.add(Calculus, text="Calculus")
+# Nested Tab
+NestedTab = ttk.Notebook(Calculus)
+Diff = ttk.Frame(NestedTab)
+NestedTab.add(Diff, text="Differential Calculus")
+NestedTab.pack(expand=1, fill="both")
+
 
 
 #enter data
@@ -208,5 +215,26 @@ plot_button.configure(state="normal")
 
 label = tk.Label(ND, text="Output", font=("TkDefault", 14))
 label.place(x=450, y=550)
+
+#Differential Calculus
+
+#input function
+input_label = tk.Label(Diff, text="Enter function: ")
+input_label.place(x=10, y=10)
+
+input = tk.Entry(Diff, justify='center')
+input.place(x=95, y=12)
+
+def derivative():
+    func = input.get()
+    derivative = diff(func)
+    print(derivative)
+    label = tk.Label(Diff, text=derivative)
+    label.place(x=10, y=70)
+    return derivative
+
+button = tk.Button(Diff, text="Calculate Derivative", command=lambda: derivative())
+button.place(x=10, y=40)
+
 
 Calculator.mainloop()
