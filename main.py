@@ -6,6 +6,10 @@ import tkinter as tk
 from tkinter import ttk
 from scipy.stats import norm
 from sympy import *
+import sympy as sp
+from sympy.interactive import printing
+printing.init_printing(use_latex=True)
+
 
 #Tkinter gui
 Calculator = tk.Tk()
@@ -17,7 +21,7 @@ fig, ax = plt.subplots()
 
 frame = tk.Frame(Calculator)
 label = tk.Label(frame, text="calculator", font=("Comic Sans MS", 32))
-label.pack()
+label.pack() 
 
 
 frame.pack()
@@ -129,7 +133,7 @@ def std_calc():
 
 toolbar = NavigationToolbar2Tk(canvas_bstats, BS, pack_toolbar=False)
 toolbar.update()
-toolbar.place
+toolbar.place()
 
 mean_button = tk.Button(BS, text="Calculate Mean", command=lambda: mean_calc())
 mean_button.configure(state="normal")
@@ -222,19 +226,86 @@ label.place(x=450, y=550)
 input_label = tk.Label(Diff, text="Enter function: ")
 input_label.place(x=10, y=10)
 
-input = tk.Entry(Diff, justify='center')
-input.place(x=95, y=12)
+
+wrt = tk.StringVar(Diff)
+wrt.set("x")
+wrt_label = tk.Label(Diff, text="With respect to: ")
+
+choices = ["x", "y", "z"]
+drop = ttk.Combobox(Diff, textvariable=wrt, values=choices)
+drop.place(x=240, y=10)
+drop.current()
+drop.config(width=5)
+
 
 def derivative():
+    x = Symbol('wrt.get()')
     func = input.get()
-    derivative = diff(func)
-    print(derivative)
-    label = tk.Label(Diff, text=derivative)
+    derivative = diff(func, wrt.get())
+    label = tk.Label(Diff, text="Derivative: " + str(derivative))
     label.place(x=10, y=70)
-    return derivative
+
+
+input = tk.Entry(Diff, justify='center')
+input.place(x=95, y=12)
 
 button = tk.Button(Diff, text="Calculate Derivative", command=lambda: derivative())
 button.place(x=10, y=40)
 
+
+
+def plot_derv():
+    func = input.get()
+    derv = diff(func, wrt.get())
+
+    # Lambdify the expressions for numerical evaluation
+    func_lambda = lambdify(wrt.get(), func, 'numpy')
+    derv_lambda = lambdify(wrt.get(), derv, 'numpy')
+
+    # Generate x values for the plot
+    x_values = np.linspace(-10, 10, 100)
+
+    # Clear the previous plot and create a new one with adjusted size and position
+    fig_derv, ax_derv = plt.subplots(figsize=(6, 4))
+    ax_derv.plot(x_values, func_lambda(x_values), label='Function')
+
+    # Evaluate the derivative at each x value
+    derv_values = np.array([derv_lambda(x) for x in x_values])
+
+    ax_derv.plot(x_values, derv_values, label='Derivative')
+
+    # Add axis labels and a grid
+    ax_derv.set_xlabel('X-axis')
+    ax_derv.set_ylabel('Y-axis')
+    ax_derv.grid(True)
+
+    # Add x and y axes
+    ax_derv.axhline(0, color='black', linewidth=0.5)
+    ax_derv.axvline(0, color='black', linewidth=0.5)
+
+    # Add legend
+    ax_derv.legend()
+
+    # Create the canvas only once and pack it
+    canvas_derv = FigureCanvasTkAgg(fig_derv, master=Diff)
+    canvas_derv.get_tk_widget().pack()
+
+    # Place the canvas after packing
+    canvas_derv.get_tk_widget().place(x=320, y=50, width=550, height=550)
+
+    # Update the toolbar for interactivity
+    toolbar_derv = NavigationToolbar2Tk(canvas_derv, Diff, pack_toolbar=False)
+    toolbar_derv.update()
+    toolbar_derv.place()
+
+
+
+
+# Plot graph button for the derivative
+plot_button_derv = tk.Button(Diff, text="Plot Function and Derivative", command=lambda: plot_derv(),
+                             relief=tk.GROOVE, borderwidth=.7, padx=1, pady=1, bg='white')
+plot_button_derv.place(x=10, y=100)
+plot_button_derv.configure(state="normal")
+plot_button_derv.place()
 
 Calculator.mainloop()
